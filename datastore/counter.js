@@ -39,7 +39,31 @@ const writeCounter = (count, callback) => {
 // Public API - Fix this function //////////////////////////////////////////////
 
 exports.getNextUniqueId = () => {
-  counter = counter + 1;
+
+
+
+  readCounter( (err, data) => {
+    if (err) {
+      console.log('unknown error');
+      return;
+    }
+    console.log('type of read data -> ', typeof(data));
+    counter = data + 1;
+    writeCounter( counter, (error, data) => {
+      if (error) {
+        console.log('error');
+        return;
+      }
+      console.log('write data -> ', data);
+    });
+
+
+  });
+
+  // if the counter is 0, the server is initiating
+  // perform readCounter function to get previous counter
+  // take the value returned from readCounter and increment by 1
+
   return zeroPaddedNumber(counter);
 };
 
