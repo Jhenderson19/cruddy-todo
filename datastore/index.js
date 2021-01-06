@@ -43,19 +43,32 @@ exports.readAll = (callback) => {
         console.log('file -> ', file, 'typeof file', typeof file);
         data.push({ id: file.slice(0, file.length - 4), text: file.slice(0, file.length - 4)});
       });
+      callback(null, data);
     }
-    callback(null, data);
   } );
 
 };
 
 exports.readOne = (id, callback) => {
-  var text = items[id];
-  if (!text) {
-    callback(new Error(`No item with id: ${id}`));
-  } else {
-    callback(null, { id, text });
-  }
+
+  // var text = items[id];
+  // if (!text) {
+  //   callback(new Error(`No item with id: ${id}`));
+  // } else {
+  //   callback(null, { id, text });
+  // }
+
+  fs.readFile(path.join(exports.dataDir, id + '.txt' ), (err, fileData) => {
+    if (err) {
+      console.log('error ->', error);
+    } else {
+      console.log('success reading ', fileData.toString(), ' from file ', id, '.txt ');
+      callback(null, {id, text: fileData.toString()});
+    }
+
+    // something
+  });
+
 };
 
 exports.update = (id, text, callback) => {
