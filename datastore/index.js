@@ -30,10 +30,23 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  var data = _.map(items, (text, id) => {
-    return { id, text };
-  });
-  callback(null, data);
+  // var data = _.map(items, (text, id) => {
+  //   console.log('items - > ', items);
+  //   return { id, text };
+  // });
+  var data = [];
+  fs.readdir( exports.dataDir, (err, files) => {
+    if (err) {
+      console.log('error -> ', error);
+    } else {
+      files.forEach(file => {
+        console.log('file -> ', file, 'typeof file', typeof file);
+        data.push({ id: file.slice(0, file.length - 4), text: file.slice(0, file.length - 4)});
+      });
+    }
+    callback(null, data);
+  } );
+
 };
 
 exports.readOne = (id, callback) => {
