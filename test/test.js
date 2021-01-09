@@ -70,8 +70,11 @@ describe('todos', () => {
     it('should create a new file for each todo', (done) => {
       todos.create('todo1', (err, data) => {
         const todoCount = fs.readdirSync(todos.dataDir).length;
+        console.log('todoCount -> ', todoCount);
+
         expect(todoCount).to.equal(1);
         todos.create('todo2', (err, data) => {
+
           expect(fs.readdirSync(todos.dataDir)).to.have.lengthOf(2);
           done();
         });

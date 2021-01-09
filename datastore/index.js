@@ -35,17 +35,141 @@ exports.readAll = (callback) => {
   //   return { id, text };
   // });
   var data = [];
-  fs.readdir( exports.dataDir, (err, files) => {
-    if (err) {
-      console.log('error -> ', error);
-    } else {
-      files.forEach(file => {
-        console.log('file -> ', file, 'typeof file', typeof file);
-        data.push({ id: file.slice(0, file.length - 4), text: file.slice(0, file.length - 4)});
+  // fs.readdir( exports.dataDir, (err, files) => {
+  //   if (err) {
+  //     console.log('error -> ', error);
+  //   } else {
+  //     files.forEach(file => {
+  //       console.log('file -> ', file, 'typeof file', typeof file);
+  //       // read file here
+  //       data.push({ id: file.slice(0, file.length - 4), text: file.toString()});
+  //     });
+  //     callback(null, data);
+  //   }
+  // });
+
+  var getFiles = () => {
+    return new Promise( (resolve, reject ) => {
+      fs.readdir( exports.dataDir, (err, files) => {
+        if (err) {
+          console.log('error -> ', error);
+          reject(error);
+        } else {
+          data = [];
+          files.forEach(file => {
+            console.log('file -> ', file, 'typeof file', typeof file);
+            // read file here
+            data.push({ id: file.slice(0, file.length - 4), text: file.toString()});
+          });
+          resolve(data);
+
+        }
       });
-      callback(null, data);
-    }
-  } );
+    });
+  };
+
+  var getTextPromises = (directory) => {
+    return new Promise( (resolve, reject) => {
+      fs.readFile(directory, (err, data) => {
+        if (err) {
+          reject(err);
+        } else {
+          console.log('data -> ', data.toString());
+          resolve(data);
+        }
+      });
+    });
+  };
+  // getFiles().then( (data) => console.log('here -> ', callback(null, data)) );
+
+  getFiles()
+    .then( (data) => {
+      console.log('here -> ', callback(null, data));
+      // return data;
+      console.log('-> ', data);
+      return data;
+    })
+    .then( (files) => {
+      data = [];
+      for ( var file of files ) {
+        console.log('nere -> ', file);
+        data.push(getTextPromises(exports.dataDir + '/' + file.text));
+      }
+      console.log('l -> ', data);
+      return data;
+    })
+    .then( (data) => {
+      console.log('answer -> ', Promise.all(data));
+      return Promise.all(data);
+    })
+    .then ( (data) => {
+      // data = [working,working,working]
+      console.log('Answer -> ', data.toString().split(','));
+
+
+    } )
+    .catch( (err) => console.log('err -> ', err) );
+  // .then( (files) => {
+  //   data = [];
+  //   // for ( var file in files ) {
+  //   //   console.log('nere -> ', file);
+  //   //   data.push(getTextPromises(exports.dataDir + '/' + file.text));
+  //   // }
+  //   return data;
+  // })
+
+  // .then ( (data) => {
+
+  //   // return Promise.all(data);
+
+  // })
+  // .then ( (data) => {
+  //   console.log('right here -> ', data);
+
+  // } );
+
+  // fs.readFile( path.join(__dirname, '/data/' + file.slice(0, file.length - 4) + '.txt'), (err, message) => {
+  //   if (err) {
+  //     console.log('err -> ', err);
+  //   } else {
+  //     data.push({ id: file.slice(0, file.length - 4), text: message.toString()});
+  //     console.log('file data -> ', message.toString());
+  //   }
+  // });
+
+
+  // var readFile = Promise.promisify(fs.readFile);
+  // var readDir = Promise.promisify(fs.readdir);
+  // var readOne = Promise.promisify(exports.readOne);
+
+
+
+
+
+
+  // read currentDirectory
+  // push all
+
+
+  // fs.readFile(path.join(exports.dataDir, id + '.txt' ), (err, fileData) => {
+  //   if (err) {
+  //     console.log('error ->', error);
+  //   } else {
+  //     console.log('success reading ', fileData.toString(), ' from file ', id, '.txt ');
+  //     callback(null, {id, text: fileData.toString()});
+  //   }
+  // });
+
+
+
+  //promisify readdir
+  //call it
+  //then
+  //push files to data
+  //then
+  //callback(null, data)
+  //catch
+  //callback(err)
 
 };
 
